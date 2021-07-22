@@ -5,12 +5,11 @@
 
 package io.opentelemetry.javaagent.instrumentation.otelannotations;
 
-import static java.util.Collections.singletonList;
-
 import application.io.opentelemetry.extension.annotations.WithSpan;
 import com.google.auto.service.AutoService;
 import io.opentelemetry.javaagent.extension.instrumentation.InstrumentationModule;
 import io.opentelemetry.javaagent.extension.instrumentation.TypeInstrumentation;
+import java.util.ArrayList;
 import java.util.List;
 
 /** Instrumentation for methods annotated with {@link WithSpan} annotation. */
@@ -23,6 +22,13 @@ public class WithSpanInstrumentationModule extends InstrumentationModule {
 
   @Override
   public List<TypeInstrumentation> typeInstrumentations() {
-    return singletonList(new WithSpanInstrumentation());
+    List<TypeInstrumentation> instrumentations=new ArrayList<>();
+    instrumentations.add(new WithSpanInstrumentation());
+    instrumentations.add(new WithSpanTestngInstrumentation());
+    instrumentations.add(new SuiteRunnerWorkerInstrumentation());
+    instrumentations.add(new SuiteRunnerInstrumentation());
+    instrumentations.add(new TestMethodWorkerInstrumentation());
+//    instrumentations.add(new TestRunnerInstrumentation());
+    return instrumentations;
   }
 }

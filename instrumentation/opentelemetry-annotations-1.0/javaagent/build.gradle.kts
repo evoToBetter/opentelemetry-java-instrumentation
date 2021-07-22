@@ -7,6 +7,7 @@ plugins {
 val versions: Map<String, String> by project
 
 dependencies {
+  implementation("org.testng:testng:6.14.3")
   compileOnly(project(":instrumentation-api-annotation-support"))
 
   compileOnly(project(":javaagent-tooling"))
