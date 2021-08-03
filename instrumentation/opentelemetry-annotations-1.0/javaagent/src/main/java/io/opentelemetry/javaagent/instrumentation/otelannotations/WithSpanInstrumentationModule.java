@@ -24,11 +24,10 @@ public class WithSpanInstrumentationModule extends InstrumentationModule {
   public List<TypeInstrumentation> typeInstrumentations() {
     List<TypeInstrumentation> instrumentations=new ArrayList<>();
     instrumentations.add(new WithSpanInstrumentation());
-    instrumentations.add(new WithSpanTestngInstrumentation());
-    instrumentations.add(new SuiteRunnerWorkerInstrumentation());
     instrumentations.add(new SuiteRunnerInstrumentation());
+    instrumentations.add(new SuiteRunnerWorkerInstrumentation());
+    instrumentations.add(new TestNGInstrumentation());
     instrumentations.add(new TestMethodWorkerInstrumentation());
-//    instrumentations.add(new TestRunnerInstrumentation());
     return instrumentations;
   }
 }

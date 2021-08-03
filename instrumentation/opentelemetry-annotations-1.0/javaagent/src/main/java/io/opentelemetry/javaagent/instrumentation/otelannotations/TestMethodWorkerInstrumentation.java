@@ -35,7 +35,7 @@ public class TestMethodWorkerInstrumentation implements TypeInstrumentation {
         .and(takesArgument(2,named("org.testng.ITestContext")))
         , TestMethodWorkerInstrumentation.class.getName()+"$PerformInvokeTestMethods"
     );
-    System.out.println("Apply PerformInvokeTestMethods");
+//    System.out.println("Apply PerformInvokeTestMethods");
   }
   @SuppressWarnings({"unused","SystemOut"})
   public static class PerformInvokeTestMethods{
@@ -47,7 +47,7 @@ public class TestMethodWorkerInstrumentation implements TypeInstrumentation {
         @Advice.Local("otelContext") Context context,
         @Advice.Local("otelScope") Scope scope
     ){
-      System.out.println("PerformInvokeTestMethods");
+//      System.out.println("PerformInvokeTestMethods");
       String name=method.getMethodName();
       context=tracer().startSpan(currentContext(), name, SpanKind.INTERNAL);
       scope=context.makeCurrent();
@@ -59,9 +59,9 @@ public class TestMethodWorkerInstrumentation implements TypeInstrumentation {
         @Advice.Local("otelScope") Scope scope,
         @Advice.Thrown Throwable throwable
     ){
-      System.out.println("PerformInvokeTestMethods finish");
+//      System.out.println("PerformInvokeTestMethods finish");
       if(scope==null){
-        System.out.println("There is no scope in PerformRunSuite finish");
+//        System.out.println("There is no scope in PerformRunSuite finish");
         return;
       }
       scope.close();

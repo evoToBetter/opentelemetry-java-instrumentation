@@ -35,7 +35,7 @@ public class SuiteRunnerWorkerInstrumentation implements TypeInstrumentation {
         .and(takesArgument(1,named("org.testng.xml.XmlSuite")))
         , SuiteRunnerWorkerInstrumentation.class.getName()+"$PerformRunSuite"
     );
-    System.out.println("Apply PerformRunSuite");
+//    System.out.println("Apply PerformRunSuite");
   }
   @SuppressWarnings({"unused","SystemOut"})
   public static class PerformRunSuite{
@@ -46,11 +46,13 @@ public class SuiteRunnerWorkerInstrumentation implements TypeInstrumentation {
         @Advice.Argument(1) XmlSuite xmlSuite,
         @Advice.Local("otelContext") Context context,
         @Advice.Local("otelScope") Scope scope
+//        @Advice.Local("startTime") Instant start
     ){
-      System.out.println("PerformRunSuite");
+//      System.out.println("PerformRunSuite");
       String name=xmlSuite.getName();
       context=tracer().startSpan(currentContext(), name, SpanKind.INTERNAL);
       scope=context.makeCurrent();
+//      start= Instant.now();
     }
 
     @Advice.OnMethodExit(onThrowable = Throwable.class, suppress = Throwable.class)
@@ -59,13 +61,43 @@ public class SuiteRunnerWorkerInstrumentation implements TypeInstrumentation {
         @Advice.Argument(1) XmlSuite xmlSuite,
         @Advice.Local("otelContext") Context context,
         @Advice.Local("otelScope") Scope scope,
+//        @Advice.Local("startTime") Instant start,
         @Advice.Thrown Throwable throwable
     ){
-      System.out.println("PerformRunSuite finish");
+//      System.out.println("PerformRunSuite finish");
       if(scope==null){
-        System.out.println("There is no scope in PerformRunSuite finish");
+//        System.out.println("There is no scope in PerformRunSuite finish");
         return;
       }
+//      StringBuilder grafanaLink=new StringBuilder();
+//      grafanaLink.append("http://localhost:3000/d/GHxpRvimz/prometheus-jvm-overview-arms?orgId=1&from=1627460700000&to=1627462200000");
+//      Instant end=Instant.now();
+//      long grafanaScopeStart=start.minus(10, ChronoUnit.SECONDS).toEpochMilli();
+//      long grafanaScopeEnd=end.plus(10,ChronoUnit.SECONDS).toEpochMilli();
+//
+//      String grafanaUrl=System.getProperty("grafana_url");
+//      String dashboardPath=System.getProperty("dashboard_path");
+//      String grafanaUser=System.getProperty("grafana_user");
+//      String grafanaPass=System.getProperty("grafana_password");
+//      String dashboardId=System.getProperty("dashboaard_id");
+//      String grafanaLink=String.format("%s/%s?orgId=1&from=%d&to=%d",grafanaUrl,dashboardPath,grafanaScopeStart,grafanaScopeEnd);
+//      currentSpan().setAttribute("grafanaLink", grafanaLink);
+//      Client client=new Client(Protocol.HTTP);
+//      Request request=new Request(Method.POST,grafanaUrl+"/api/annotations");
+//      ChallengeResponse challengeResponse=new ChallengeResponse(ChallengeScheme.HTTP_BASIC, grafanaUser,grafanaPass);
+//      request.getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS,new Series<>(Header.class));
+//      request.setChallengeResponse(challengeResponse);
+//      request.getHeaders().add(HeaderConstants.HEADER_CONTENT_TYPE,"application/json");
+//      request.getClientInfo().accept(MediaType.APPLICATION_JSON);
+//      Representation representation=new StringRepresentation("{\n"
+//          + "  \"dashboardId\":"+dashboardId+",\n"
+//          + "  \"time\":"+start.toEpochMilli()+",\n"
+//          + "  \"timeEnd\":"+end.toEpochMilli()+",\n"
+//          + "  \"tags\":[\""+currentSpan().getSpanContext().getTraceId()+"\"],\n"
+//          + "  \"text\":\""+xmlSuite.getName()+"\"\n"
+//          + "}",MediaType.APPLICATION_JSON);
+//      request.setEntity(representation);
+//      Response response=client.handle(request);
       scope.close();
       if(throwable!=null){
         tracer().endExceptionally(context,throwable);

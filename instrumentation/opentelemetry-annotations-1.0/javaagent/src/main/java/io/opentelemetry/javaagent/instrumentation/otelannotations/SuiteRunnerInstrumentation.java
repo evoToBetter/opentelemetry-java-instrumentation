@@ -15,35 +15,36 @@ import io.opentelemetry.javaagent.extension.instrumentation.TypeTransformer;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.matcher.ElementMatcher;
+import org.testng.TestRunner;
 
 public class SuiteRunnerInstrumentation implements TypeInstrumentation {
   @Override
   public ElementMatcher<TypeDescription> typeMatcher() {
     return named("org.testng.SuiteRunner");
   }
-  @SuppressWarnings({"unused","SystemOut"})
+  @SuppressWarnings({"SystemOut"})
   @Override
   public void transform(TypeTransformer transformer) {
     transformer.applyAdviceToMethod(
-        isMethod()
+            isMethod()
             .and(named("runTest"))
             .and(takesArguments(1))
             .and(takesArgument(0,named("org.testng.TestRunner")))
-        , SuiteRunnerInstrumentation.class.getName()+"$PerformRunTest"
+        , this.getClass().getName()+"$PerformRunTest"
     );
-    System.out.println("Apply PerformRunTest");
+//    System.out.println("Apply PerformRunTest");
   }
   @SuppressWarnings({"unused","SystemOut"})
   public static class PerformRunTest{
     @Advice.OnMethodEnter(suppress = Throwable.class)
     public static void onEnter(
-//        @Advice.Argument(0) TestRunner runner,
+        @Advice.Argument(0) TestRunner runner,
         @Advice.Local("otelContext") Context context,
         @Advice.Local("otelScope") Scope scope
     ){
-      System.out.println("PerformRunTest");
-//      String name=runner.getCurrentXmlTest().getName();
-      String name ="new_name";
+//      System.out.println("PerformRunTest");
+      String name=runner.getCurrentXmlTest().getName();
+//      String name ="new_name";
       context=tracer().startSpan(currentContext(), name, SpanKind.INTERNAL);
       scope=context.makeCurrent();
     }
@@ -54,9 +55,9 @@ public class SuiteRunnerInstrumentation implements TypeInstrumentation {
         @Advice.Local("otelScope") Scope scope,
         @Advice.Thrown Throwable throwable
     ){
-      System.out.println("PerformRunTest finish");
+//      System.out.println("PerformRunTest finish");
       if(scope==null){
-        System.out.println("There is no scope in PerformRunSuite finish");
+//        System.out.println("There is no scope in PerformRunSuite finish");
         return;
       }
       scope.close();

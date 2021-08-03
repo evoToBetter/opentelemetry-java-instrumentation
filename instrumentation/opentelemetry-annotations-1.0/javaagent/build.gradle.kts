@@ -7,7 +7,9 @@ plugins {
 val versions: Map<String, String> by project
 
 dependencies {
-  implementation("org.testng:testng:6.14.3")
+  compileOnly("org.testng:testng:6.14.3")
+  compileOnly("org.restlet.jse:org.restlet:2.4.1")
+//  implementation("")
   compileOnly(project(":instrumentation-api-annotation-support"))
 
   compileOnly(project(":javaagent-tooling"))
